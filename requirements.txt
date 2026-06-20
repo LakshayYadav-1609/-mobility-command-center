@@ -1,0 +1,8 @@
+streamlit
+pandas
+plotly
+anthropic
+scikit-learn
+xgboost
+openpyxl
+reportlab
