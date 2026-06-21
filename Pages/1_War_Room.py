@@ -52,16 +52,57 @@ on_track      = len(assignees[assignees["status"] == "On Track"])
 completed     = len(assignees[assignees["status"] == "Completed"])
 comp_critical = len(compliance[compliance["status"] == "CRITICAL"])
 
-with k1:
-    st.metric("💼 Total", total)
-with k2:
-    st.metric("🚨 Critical", critical)
-with k3:
-    st.metric("✅ On Track", on_track)
-with k4:
-    st.metric("🏁 Completed", completed)
-with k5:
-    st.metric("🛡️ Compliance", comp_critical)
+st.markdown("""
+<style>
+  .kpi-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #E2E8F0;
+    transition: all 0.2s;
+  }
+  .kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(79,70,229,0.12);
+  }
+  .kpi-icon { font-size: 28px; margin-bottom: 8px; }
+  .kpi-value {
+    font-size: 36px; font-weight: 800;
+    letter-spacing: -0.02em; line-height: 1;
+  }
+  .kpi-label {
+    font-size: 13px;
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+  }
+</style>
+""", unsafe_allow_html=True)
+
+kpi1, kpi2, kpi3, kpi4, kpi5 = st.columns(5)
+
+kpis = [
+    (kpi1, "💼", str(total),             "Total Assignments",  "#4F46E5"),
+    (kpi2, "🚨", str(critical),          "Critical / At Risk", "#DC2626"),
+    (kpi3, "✅", str(on_track),          "On Track",           "#059669"),
+    (kpi4, "🏁", str(completed),         "Completed",          "#0284C7"),
+    (kpi5, "🛡️", str(comp_critical),    "Compliance Due",     "#7C3AED"),
+]
+
+for col, icon, val, label, color in kpis:
+    with col:
+        st.markdown(f"""
+        <div class="kpi-card"
+             style="border-top: 4px solid {color};">
+          <div class="kpi-icon">{icon}</div>
+          <div class="kpi-value" style="color:{color};">{val}</div>
+          <div class="kpi-label">{label}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 st.divider()
 
@@ -82,7 +123,7 @@ with col1:
         status_counts, x="Status", y="Count",
         color="Status",
         color_discrete_map=color_map,
-        template="plotly_dark"
+        template="plotly_white"
     )
     fig.update_layout(
         paper_bgcolor="#1A1D27",

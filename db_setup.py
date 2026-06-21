@@ -3,23 +3,29 @@ import random
 from datetime import datetime, timedelta
 from config import DB_PATH
 
-FIRST_NAMES = [
-    "Raj", "Priya", "Amit", "Sneha", "Vikram",
-    "Ananya", "Rohan", "Neha", "Arjun", "Pooja",
-    "James", "Sarah", "Michael", "Emma", "David",
-    "Liu", "Wei", "Yuki", "Aisha", "Omar"
-]
-
-LAST_NAMES = [
-    "Sharma", "Patel", "Singh", "Kumar", "Verma",
-    "Smith", "Johnson", "Williams", "Brown", "Jones",
-    "Wang", "Li", "Zhang", "Khan", "Ali"
+FULL_NAMES = [
+    "Rahul Sharma", "Priya Patel", "Amit Verma", "Sneha Gupta",
+    "Vikram Mehta", "Ananya Singh", "Rohan Kumar", "Neha Joshi",
+    "Arjun Nair", "Pooja Agarwal", "Karan Malhotra", "Divya Reddy",
+    "Siddharth Bose", "Meera Iyer", "Varun Chopra", "Ishaan Kapoor",
+    "James Smith", "Sarah Johnson", "Michael Brown", "Emma Wilson",
+    "David Taylor", "Lisa Anderson", "John Davis", "Anna Thomas",
+    "Robert Martinez", "Jennifer White", "William Harris", "Emily Clark",
+    "Liu Yang", "Wei Chen", "Yuki Tanaka", "Kenji Sato",
+    "Min-Jun Kim", "Ji-Young Park", "Hiroshi Yamamoto", "Sakura Ito",
+    "Aisha Khan", "Omar Hassan", "Fatima Ali", "Ahmed Malik",
+    "Elena Petrov", "Ivan Sokolov", "Sophie Martin", "Pierre Dubois",
+    "Carlos Garcia", "Ana Lopez", "Maria Santos", "Roberto Silva",
+    "Liam O Brien", "Aoife Murphy", "Sean Gallagher", "Niamh Ryan",
+    "Mohammed Al Rashid", "Layla Al Farsi", "Tariq Hussain", "Nadia Abbas"
 ]
 
 COMPANIES = [
     "TechGlobal Inc", "MegaCorp Ltd", "InnovateCo",
     "FutureTech", "GlobalServ Ltd", "SmartBiz Inc",
-    "ProCorp", "NextGen Solutions", "AlphaGroup"
+    "ProCorp", "NextGen Solutions", "AlphaGroup",
+    "BetaIndustries", "GammaTech", "DeltaCorp",
+    "OmegaServices", "ZenithGroup", "ApexSolutions"
 ]
 
 ROUTES = [
@@ -33,6 +39,11 @@ ROUTES = [
     ("Delhi",     "San Francisco", "USA"),
     ("Mumbai",    "Amsterdam",     "Netherlands"),
     ("Bangalore", "Tokyo",         "Japan"),
+    ("Chennai",   "Dublin",        "Ireland"),
+    ("Hyderabad", "Paris",         "France"),
+    ("Pune",      "Melbourne",     "Australia"),
+    ("Delhi",     "Frankfurt",     "Germany"),
+    ("Mumbai",    "Toronto",       "Canada"),
 ]
 
 SERVICE_TYPES = [
@@ -60,7 +71,8 @@ COMPLIANCE_TYPES = [
     "Business Visa",
     "Dependent Visa",
     "Tax Filing Deadline",
-    "Work Authorization"
+    "Work Authorization",
+    "Social Security Registration"
 ]
 
 DELAY_REASONS = [
@@ -70,7 +82,8 @@ DELAY_REASONS = [
     "Assignee unavailable",
     "Housing market shortage",
     "Immigration backlog",
-    "Budget approval pending"
+    "Budget approval pending",
+    "Public holiday delay"
 ]
 
 VENDOR_NAMES = {
@@ -345,24 +358,32 @@ def generate_assignees(cur, vendor_ids, n=300):
         "Priya Sharma", "Raj Kumar",
         "Sneha Patel", "Amit Singh", "Neha Verma"
     ]
+    names_pool = FULL_NAMES.copy()
     for i in range(n):
-        name         = f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}"
+        if len(names_pool) == 0:
+            names_pool = FULL_NAMES.copy()
+        name = names_pool.pop(random.randint(0, len(names_pool) - 1))
+
         route        = random.choice(ROUTES)
         origin_city  = route[0]
         dest_city    = route[1]
         dest_country = route[2]
+
         family_size  = random.choices([1,2,3,4,5], weights=[20,30,25,15,10])[0]
         dual_career  = 1 if family_size > 1 and random.random() < 0.4 else 0
         has_children = 1 if family_size > 2 and random.random() < 0.6 else 0
         policy_tier  = random.choices(POLICY_TIERS, weights=[20,40,30,10])[0]
+
         start_date   = today - timedelta(days=random.randint(0, 90))
         target_date  = start_date + timedelta(days=random.randint(45, 120))
+
         risk = 20
         if dual_career:                                  risk += 20
         if has_children:                                 risk += 10
         if dest_country in ["Japan", "Germany", "France"]: risk += 15
         if policy_tier == "Basic":                       risk += 10
         risk = min(95, risk + random.randint(0, 25))
+
         if risk > 75:
             status = random.choices(
                 ["At Risk", "Delayed", "In Progress"], weights=[40, 30, 30]
@@ -375,6 +396,7 @@ def generate_assignees(cur, vendor_ids, n=300):
             status = random.choices(
                 ["On Track", "In Progress", "Completed"], weights=[50, 35, 15]
             )[0]
+
         cur.execute("""
             INSERT INTO assignees
             (name, company, origin_city, dest_city,
