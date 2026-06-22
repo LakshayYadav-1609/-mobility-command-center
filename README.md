@@ -1,7 +1,14 @@
-# 💼 Mobility Operations Command Center
+> Complete Global Mobility Operations Platform — built with Python + Claude AI
 
-Complete Global Mobility Operations Platform
-Built with Python + Claude AI
+**🏠 Home**
+<img width="1911" height="989" alt="Home Page" src="https://github.com/user-attachments/assets/2d84ba5b-688c-42db-bb52-4c1ff49e8570" />
+
+**🎯 War Room Dashboard**
+<img width="1710" height="872" alt="War Room Page 1" src="https://github.com/user-attachments/assets/327bbbe6-8fda-4657-afe0-0947b80c891e" />
+<img width="1910" height="904" alt="War Room Page 2" src="https://github.com/user-attachments/assets/667b7b8d-43e8-4b3a-861e-4a5f0a763b34" />
+
+**🧳 Assignee Journey Tracker**
+<img width="1905" height="987" alt="Assignee Journey" src="https://github.com/user-attachments/assets/8741636d-ccca-406c-a17c-b54e2cf7f627" />
 
 ## 🚀 About
 A complete end-to-end operations platform for
